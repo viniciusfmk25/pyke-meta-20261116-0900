@@ -4,18 +4,18 @@
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>Mineração Meta · 16/11/2026 09h</title>
 <style>
-:root{--bg:#10151c;--surface:#1b2430;--line:#314155;--text:#e8eef6;--muted:#a8b6c8;--action:#1d4ed8;--warn:#e4b15a;--focus:#9ec5ff}
+:root{--bg:#0f141b;--surface:#18212c;--line:#2d3b4d;--text:#e8eef6;--muted:#a8b6c8;--action:#1d4ed8;--warn:#e4b15a;--focus:#9ec5ff}
 *{box-sizing:border-box}
 body{margin:0;background:var(--bg);color:var(--text);font:16px/1.45 system-ui,sans-serif}
 a{color:#9dccff}
 a:focus,button:focus,input:focus,select:focus{outline:2px solid var(--focus);outline-offset:2px}
-header,main,footer{padding:20px;max-width:1100px;margin:auto}
-header{padding-bottom:0}
+.layout{display:grid;grid-template-columns:260px minmax(0,1fr);gap:16px;max-width:1180px;margin:auto;padding:20px}
+.side,.board{min-width:0}
 .kicker{color:var(--muted);margin:0 0 8px}
-h1{font-size:1.6rem;line-height:1.2;margin:0 0 12px}
+h1{font-size:1.45rem;line-height:1.2;margin:0 0 12px}
 .badge{display:inline-block;background:#3a2e16;color:var(--warn);border:1px solid #6d5524;border-radius:999px;padding:4px 10px;font-weight:700}
 .status{color:var(--muted);margin:12px 0 0}
-.summary{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin:16px 0}
+.summary{display:grid;gap:12px;margin:16px 0}
 .card{background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:14px}
 .card b{display:block;font-size:1.4rem}
 .card span{color:var(--muted);font-size:.9rem}
@@ -23,6 +23,7 @@ h1{font-size:1.6rem;line-height:1.2;margin:0 0 12px}
 label{display:flex;flex-direction:column;gap:4px;color:var(--muted);font-size:.85rem}
 input,select,button{font:inherit;border-radius:8px;border:1px solid var(--line);background:#121922;color:var(--text);padding:10px 12px;min-height:44px}
 button{background:var(--action);border-color:transparent;color:#fff;font-weight:700;cursor:pointer}
+.sort{background:transparent;color:inherit;border:0;padding:0;min-height:0;font-weight:700}
 td,dd,p{overflow-wrap:anywhere}
 .table-wrap{overflow:auto;border:1px solid var(--line);border-radius:12px}
 table{border-collapse:collapse;width:100%;min-width:720px}
@@ -38,34 +39,39 @@ dialog{background:var(--surface);color:var(--text);border:1px solid var(--line);
 dialog::backdrop{background:#000a}
 dt{font-weight:700;margin-top:12px}
 dd{margin:2px 0 0}
-footer{color:var(--muted)}
+footer{color:var(--muted);max-width:1180px;margin:auto;padding:0 20px 20px}
 @media (max-width:844px){
-  header,main,footer{padding:12px}
+  .layout{grid-template-columns:1fr;padding:12px;gap:8px}
   h1{font-size:1.25rem;margin-bottom:8px}
   .status{margin-top:8px}
-  .summary{grid-template-columns:repeat(3,1fr);gap:8px;margin:12px 0}
+  .summary{grid-template-columns:repeat(3,1fr);gap:8px}
   .card{padding:8px}
   .card b{font-size:1.15rem}
   .card span{font-size:.72rem;line-height:1.25}
   .tools{display:grid;grid-template-columns:1fr 1fr;gap:8px}
   .tools label:first-child{grid-column:1 / -1}
   label,input,select,button{width:100%}
+  .sort{width:auto}
   .table-wrap{display:none}
   .cards{display:block}
+  footer{padding:0 12px 16px}
 }
 </style>
+<div class="layout">
+<aside class="side">
 <header>
   <p class="kicker">Brasil · anúncios ativos · leitura pública · sem atualização ao vivo</p>
   <h1>Mineração Meta · 16/11/2026 · 09h</h1>
   <p><span class="badge">Conferência parcial</span></p>
   <p class="status" id="status"></p>
 </header>
-<main>
   <section class="summary" aria-label="Resumo da consulta">
     <div class="card"><b id="n-produtos"></b><span>produtos distintos na coleta</span></div>
     <div class="card"><b id="n-linhas"></b><span>linhas por produto e preço</span></div>
     <div class="card"><b id="n-anunciantes"></b><span>anunciantes nestas linhas</span></div>
   </section>
+</aside>
+<main class="board">
   <p class="status">As contagens de anúncios são da biblioteca ou da oferta vista. Não são receita, conversão nem vendas.</p>
   <div class="tools">
     <label>Buscar produto<input id="q" type="search" placeholder="Nome do produto"></label>
@@ -76,14 +82,15 @@ footer{color:var(--muted)}
   <p class="empty" id="empty">Nenhuma linha com esse filtro.</p>
   <div class="table-wrap">
     <table>
-      <thead><tr><th>Produto</th><th>Anunciante</th><th>Preço visto</th><th>Situação</th><th>Acesso</th></tr></thead>
+      <thead><tr><th><button class="sort" type="button" data-sort="product">Produto</button></th><th><button class="sort" type="button" data-sort="advertiser">Anunciante</button></th><th><button class="sort" type="button" data-sort="price">Preço visto</button></th><th>Situação</th><th>Acesso</th></tr></thead>
       <tbody id="rows"></tbody>
     </table>
   </div>
   <div class="cards" id="cards"></div>
 </main>
+</div>
 <footer>
-  <p>Fonte da coleta: 2026-11-16T12:24:07+00:00. O status permanece parcial.</p>
+  <p>Fonte da coleta: 2026-11-16T12:24:07+00:00. O status permanece parcial. Apresentação atualizada em 16/11/2026; os dados da coleta não mudaram.</p>
   <p><a href="relatorio.md">Relatório</a> · <a href="evidencias.json">Dados e links completos</a></p>
 </footer>
 <dialog id="detail"><div id="body"></div><button id="close" type="button">Fechar</button></dialog>
@@ -98,9 +105,16 @@ document.querySelector('#n-anunciantes').textContent=String(new Set(rows.map(r=>
 function x(s){return String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]))}
 function link(u,t){return u?'<a target="_blank" rel="noopener" href="'+x(u)+'">'+x(t)+'</a>':'não aberto'}
 for (const a of [...new Set(rows.map(r=>r.advertiser))].sort()) f.insertAdjacentHTML('beforeend','<option>'+x(a)+'</option>');
+let sortKey='product', sortDir=1;
+function priceKey(s){const m=String(s).match(/\d+[\d.]*,\d+|\d+/); return m?Number(m[0].replace(/\./g,'').replace(',','.')):1e12}
 function chosen(){
   const term=q.value.toLowerCase();
-  return rows.map((r,i)=>({...r,i})).filter(r=>(!f.value||r.advertiser===f.value)&&(!term||(r.product+' '+r.advertiser).toLowerCase().includes(term)));
+  const list=rows.map((r,i)=>({...r,i})).filter(r=>(!f.value||r.advertiser===f.value)&&(!term||(r.product+' '+r.advertiser).toLowerCase().includes(term)));
+  list.sort((a,b)=>{
+    const c=sortKey==='price'?priceKey(a.price)-priceKey(b.price):String(a[sortKey]).localeCompare(String(b[sortKey]),'pt');
+    return c*sortDir;
+  });
+  return list;
 }
 function show(){
   const list=chosen();
@@ -116,7 +130,11 @@ function openDetail(i){
   body.innerHTML='<h2>'+x(r.product)+'</h2><dl>'+Object.entries(r).map(([k,v])=>{const name=labels[k]||k; if(Array.isArray(v)) return '<dt>'+x(name)+'</dt><dd>'+x(v.join(', '))+'</dd>'; if(/^https?:/.test(String(v))) return '<dt>'+x(name)+'</dt><dd>'+link(v,'Abrir')+'</dd>'; return '<dt>'+x(name)+'</dt><dd>'+x(v)+'</dd>';}).join('')+'</dl>';
   detail.showModal();
 }
-document.querySelector('main').addEventListener('click',ev=>{const b=ev.target.closest('button[data-i]'); if(b) openDetail(Number(b.dataset.i));});
+document.querySelector('main').addEventListener('click',ev=>{
+  const s=ev.target.closest('button[data-sort]');
+  if(s){const k=s.dataset.sort; sortDir=sortKey===k?-sortDir:1; sortKey=k; show(); return;}
+  const b=ev.target.closest('button[data-i]'); if(b) openDetail(Number(b.dataset.i));
+});
 q.oninput=show; f.onchange=show;
 document.querySelector('#clear').onclick=()=>{q.value=''; f.value=''; show();};
 document.querySelector('#close').onclick=()=>detail.close();
